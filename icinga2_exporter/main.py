@@ -25,7 +25,7 @@ import icinga2_exporter.log as log
 import icinga2_exporter.fileconfiguration as config
 from icinga2_exporter.proxy import app as icinga2
 import icinga2_exporter.monitorconnection as monitorconnection
-
+import os
 
 def start():
     """
@@ -81,6 +81,21 @@ def create_app(config_path=None):
         config_file = config_path
 
     configuration = config.read_config(config_file)
+    
+    if "passwd" in configuration['icinga2']:
+        print("icinga2 password loaded from configuration")
+    else:         
+        configuration['icinga2']['passwd'] = os.environ['ICINGA2_PASSWD']
+
+    if "user" in configuration['icinga2']:
+        print("icinga2 user loaded from configuration")
+    else:         
+        configuration['icinga2']['user'] = os.environ['ICINGA2_USER']
+
+    if "url" in configuration['icinga2']:
+        print("icinga2 url loaded from configuration")
+    else:         
+        configuration['icinga2']['url'] = os.environ['ICINGA2_URL']
 
     monitorconnection.MonitorConfig(configuration)
 
